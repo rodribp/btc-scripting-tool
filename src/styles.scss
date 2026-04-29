@@ -1,1 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'IBMPlexMono';
+  src: url('/fonts/IBMPlexMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'IBMPlexMono';
+  src: url('/fonts/IBMPlexMono-Medium.ttf') format('truetype');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'IBMPlexMono';
+  src: url('/fonts/IBMPlexMono-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+:root {
+  --primary-color: #151940;
+  --font-medium: 500;
+  --font-bold: 700;
+}
+
+@layer base {
+  * {
+    font-family: 'IBMPlexMono', monospace;
+    font-weight: 400;
+  }
+}

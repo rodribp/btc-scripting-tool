@@ -1,0 +1,9 @@
+#sidebar {
+  background-color: var(--primary-color);
+  color: white;
+
+  div:last-of-type {
+    scrollbar-width: thin;
+    scrollbar-color: #374151 transparent;
+  }
+}

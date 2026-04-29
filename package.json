@@ -1,5 +1,5 @@
 {
-  "name": "btc-scripts-visualizer",
+  "name": "btc-scripting-tool",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -11,13 +11,21 @@
   "private": true,
   "packageManager": "npm@11.8.0",
   "dependencies": {
+    "@angular/cdk": "^21.2.8",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
+    "@fortawesome/angular-fontawesome": "^4.0.0",
+    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@noble/curves": "^2.2.0",
+    "@tailwindcss/postcss": "^4.2.4",
+    "bitcoinjs-lib": "^7.0.1",
+    "postcss": "^8.5.10",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.2.4",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
