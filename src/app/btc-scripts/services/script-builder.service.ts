@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { effect, Injectable, signal } from '@angular/core';
 import { OpcodeControl } from '../utils/opcodes.constants';
 import { Instruction, TxContext } from '../interfaces/models';
 import { ScriptParser } from '../utils/script-parser';
@@ -10,9 +10,18 @@ export interface PlacedBlock {
   color: string;
 }
 
+const loadFromLocalStorage = (): PlacedBlock[] => {
+  const blocksHistory = localStorage.getItem('blocksHistory') ?? '[]';
+  return JSON.parse(blocksHistory);
+}
+
 @Injectable({ providedIn: 'root' })
 export class ScriptBuilderService {
   blocks = signal<PlacedBlock[]>([]);
+
+  constructor() {
+    this.blocks.set(loadFromLocalStorage());
+  }
 
   addBlock(opcode: OpcodeControl, color: string): void {
     this.blocks.update((blocks) => [
@@ -25,16 +34,20 @@ export class ScriptBuilderService {
     this.blocks.update((blocks) => blocks.filter((b) => b.id !== id));
   }
 
-  clear() {
-    this.blocks.set([]);
-  }
-
   updateBlockValue(id: string, key: string, value: string): void {
     this.blocks.update((blocks) =>
       blocks.map((b) =>
         b.id === id ? { ...b, userValues: { ...b.userValues, [key]: value } } : b,
-      )
+      ),
     );
+  }
+
+  saveBlocksToLocalStorage = effect(() => {
+    localStorage.setItem('blocksHistory', JSON.stringify(this.blocks()));
+  })  
+  
+  clear() {
+    this.blocks.set([]);
   }
 
   cloneBlock(id: string): void {
