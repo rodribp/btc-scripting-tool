@@ -15,6 +15,7 @@ export interface VmState {
   readonly isValid: boolean;
   readonly error?: string;
   readonly lastCodeSeparatorIndex: number;
+  readonly vfExec: boolean[];
 }
 
 export interface TxContext {

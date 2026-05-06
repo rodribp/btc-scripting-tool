@@ -13,6 +13,7 @@ export class BitcoinVM {
       isComplete: script.length === 0,
       isValid: false,
       lastCodeSeparatorIndex: 0,
+      vfExec: [],
     };
   }
 
@@ -28,11 +29,22 @@ export class BitcoinVM {
       altStack: [...currentState.altStack],
       codeSeparatorIndex: currentState.lastCodeSeparatorIndex,
       ip: currentState.ip,
+      vfExec: [...currentState.vfExec],
     };
     let error: string | undefined = undefined;
 
     try {
-      this.executeInstruction(instruction, env, txContext);
+      if (
+        instruction.opcode === Opcodes.OP_IF ||
+        instruction.opcode === Opcodes.OP_NOTIF ||
+        instruction.opcode === Opcodes.OP_ELSE ||
+        instruction.opcode === Opcodes.OP_ENDIF ||
+        env.vfExec.length === 0 ||
+        env.vfExec[env.vfExec.length - 1]
+      ) {
+        this.executeInstruction(instruction, env, txContext);
+        console.log(env.vfExec);
+      }
     } catch (e: any) {
       error = e.message;
     }
@@ -40,7 +52,8 @@ export class BitcoinVM {
     const nextIp = currentState.ip + 1;
     const isComplete = nextIp >= currentState.script.length;
     const topItem = env.stack[env.stack.length - 1];
-    const isValid = isComplete && !error && env.stack.length > 0 && Op.verify(topItem);
+    const isValid =
+      isComplete && !error && env.stack.length > 0 && Op.verify(topItem) && env.vfExec.length === 0;
 
     return {
       stack: env.stack,
@@ -51,16 +64,22 @@ export class BitcoinVM {
       isValid,
       error,
       lastCodeSeparatorIndex: env.codeSeparatorIndex,
+      vfExec: env.vfExec,
     };
   }
 
   private static executeInstruction(
     instruction: Instruction,
-    env: { stack: StackItem[]; altStack: StackItem[]; codeSeparatorIndex: number; ip: number },
+    env: {
+      stack: StackItem[];
+      altStack: StackItem[];
+      codeSeparatorIndex: number;
+      ip: number;
+      vfExec: boolean[];
+    },
     txContext?: TxContext,
   ): void {
-    const stack = env.stack;
-    const altStack = env.altStack;
+    const { stack, altStack, ip, vfExec } = env;
 
     // OP_PUSHBYTES
     if (instruction.opcode >= 0x01 && instruction.opcode <= 0x4e) {
@@ -82,6 +101,7 @@ export class BitcoinVM {
         env.codeSeparatorIndex = env.ip + 1;
         break;
       }
+
       case Opcodes.OP_0: {
         stack.push(new Uint8Array([]));
         break;
@@ -254,7 +274,7 @@ export class BitcoinVM {
 
         break;
       }
-      
+
       case Opcodes.OP_SHA256: {
         if (stack.length < 1) {
           throw new Error(`OP_SHA256 ${HelperFunctions.defaultErrorMessages('requiredItems', 1)}`);
@@ -271,10 +291,51 @@ export class BitcoinVM {
         if (stack.length < 1) {
           throw new Error(`OP_HASH256 ${HelperFunctions.defaultErrorMessages('requiredItems', 1)}`);
         }
-        const a =stack.pop()!;
+        const a = stack.pop()!;
 
         stack.push(hash256(a));
 
+        break;
+      }
+
+      case Opcodes.OP_NOP:
+        //Does nothing
+        break;
+
+      case Opcodes.OP_IF: {
+        if (stack.length < 1) {
+          throw new Error(`OP_IF ${HelperFunctions.defaultErrorMessages('requiredItems', 1)}`);
+        }
+        const topItem = stack[stack.length - 1];
+        vfExec.push(Op.verify(topItem));
+        stack.pop();
+        break;
+      }
+
+      case Opcodes.OP_NOTIF: {
+        if (stack.length < 1) {
+          throw new Error(`OP_IF ${HelperFunctions.defaultErrorMessages('requiredItems', 1)}`);
+        }
+        const topItem = stack[stack.length - 1];
+        vfExec.push(!Op.verify(topItem));
+        stack.pop();
+        break;
+      }
+
+      case Opcodes.OP_ELSE: {
+        if (vfExec.length === 0) {
+          throw new Error(`OP_ELSE requires an OP_IF earlier`);
+        }
+        const flipped = !vfExec.pop();
+        vfExec.push(flipped);
+        break;
+      }
+
+      case Opcodes.OP_ENDIF: {
+        if (vfExec.length === 0) {
+          throw new Error(`OP_ENDIF requires an OP_IF earlier`);
+        }
+        vfExec.pop();
         break;
       }
 

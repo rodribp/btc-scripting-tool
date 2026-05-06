@@ -27,12 +27,12 @@ export enum Opcodes {
   OP_1NEGATE = 0x4f,
 
   // --- Flow Control ---
-  OP_NOP = 0x61,
-  OP_IF = 0x63,
-  OP_NOTIF = 0x64,
-  OP_ELSE = 0x67,
-  OP_ENDIF = 0x68,
-  OP_VERIFY = 0x69,
+  OP_NOP = 0x61, //✅
+  OP_IF = 0x63, //✅
+  OP_NOTIF = 0x64, //✅
+  OP_ELSE = 0x67, //✅
+  OP_ENDIF = 0x68, //✅
+  OP_VERIFY = 0x69, //✅
   OP_RETURN = 0x6a,
 
   // --- Stack Manipulation ---
@@ -133,6 +133,7 @@ export interface OpcodeControl {
   name: string;
   alias?: string;
   active: boolean;
+  disabled?: boolean;
   userEntries?: UserEntry[];
 }
 
@@ -213,11 +214,11 @@ export const opcodesController: OpcodeSection[] = [
   {
     section: 'Flow control',
     opcodes: [
-      { number: Opcodes.OP_NOP, name: 'OP_NOP', active: false },
-      { number: Opcodes.OP_IF, name: 'OP_IF', active: false },
-      { number: Opcodes.OP_NOTIF, name: 'OP_NOTIF', active: false },
-      { number: Opcodes.OP_ELSE, name: 'OP_ELSE', active: false },
-      { number: Opcodes.OP_ENDIF, name: 'OP_ENDIF', active: false },
+      { number: Opcodes.OP_NOP, name: 'OP_NOP', active: true },
+      { number: Opcodes.OP_IF, name: 'OP_IF', active: true },
+      { number: Opcodes.OP_NOTIF, name: 'OP_NOTIF', active: true },
+      { number: Opcodes.OP_ELSE, name: 'OP_ELSE', active: true },
+      { number: Opcodes.OP_ENDIF, name: 'OP_ENDIF', active: true },
       { number: Opcodes.OP_VERIFY, name: 'OP_VERIFY', active: true },
       { number: Opcodes.OP_RETURN, name: 'OP_RETURN', active: false },
     ],
@@ -243,20 +244,20 @@ export const opcodesController: OpcodeSection[] = [
   {
     section: 'Splice',
     opcodes: [
-      { number: Opcodes.OP_CAT, name: 'OP_CAT', active: false },
-      { number: Opcodes.OP_SUBSTR, name: 'OP_SUBSTR', active: false },
-      { number: Opcodes.OP_LEFT, name: 'OP_LEFT', active: false },
-      { number: Opcodes.OP_RIGHT, name: 'OP_RIGHT', active: false },
+      { number: Opcodes.OP_CAT, name: 'OP_CAT', active: false, disabled: true },
+      { number: Opcodes.OP_SUBSTR, name: 'OP_SUBSTR', active: false, disabled: true },
+      { number: Opcodes.OP_LEFT, name: 'OP_LEFT', active: false, disabled: true },
+      { number: Opcodes.OP_RIGHT, name: 'OP_RIGHT', active: false, disabled: true },
       { number: Opcodes.OP_SIZE, name: 'OP_SIZE', active: false },
     ],
   },
   {
     section: 'Bitwise logic',
     opcodes: [
-      { number: Opcodes.OP_INVERT, name: 'OP_INVERT', active: false },
-      { number: Opcodes.OP_AND, name: 'OP_AND', active: false },
-      { number: Opcodes.OP_OR, name: 'OP_OR', active: false },
-      { number: Opcodes.OP_XOR, name: 'OP_XOR', active: false },
+      { number: Opcodes.OP_INVERT, name: 'OP_INVERT', active: false, disabled: true },
+      { number: Opcodes.OP_AND, name: 'OP_AND', active: false, disabled: true },
+      { number: Opcodes.OP_OR, name: 'OP_OR', active: false, disabled: true },
+      { number: Opcodes.OP_XOR, name: 'OP_XOR', active: false, disabled: true },
       { number: Opcodes.OP_EQUAL, name: 'OP_EQUAL', active: true },
       { number: Opcodes.OP_EQUALVERIFY, name: 'OP_EQUALVERIFY', active: true },
     ],
@@ -266,19 +267,19 @@ export const opcodesController: OpcodeSection[] = [
     opcodes: [
       { number: Opcodes.OP_1ADD, name: 'OP_1ADD', active: false },
       { number: Opcodes.OP_1SUB, name: 'OP_1SUB', active: false },
-      { number: Opcodes.OP_2MUL, name: 'OP_2MUL', active: false },
-      { number: Opcodes.OP_2DIV, name: 'OP_2DIV', active: false },
+      { number: Opcodes.OP_2MUL, name: 'OP_2MUL', active: false, disabled: true },
+      { number: Opcodes.OP_2DIV, name: 'OP_2DIV', active: false, disabled: true },
       { number: Opcodes.OP_NEGATE, name: 'OP_NEGATE', active: false },
       { number: Opcodes.OP_ABS, name: 'OP_ABS', active: false },
       { number: Opcodes.OP_NOT, name: 'OP_NOT', active: false },
       { number: Opcodes.OP_0NOTEQUAL, name: 'OP_0NOTEQUAL', active: false },
       { number: Opcodes.OP_ADD, name: 'OP_ADD', active: true },
       { number: Opcodes.OP_SUB, name: 'OP_SUB', active: false },
-      { number: Opcodes.OP_MUL, name: 'OP_MUL', active: false },
-      { number: Opcodes.OP_DIV, name: 'OP_DIV', active: false },
-      { number: Opcodes.OP_MOD, name: 'OP_MOD', active: false },
-      { number: Opcodes.OP_LSHIFT, name: 'OP_LSHIFT', active: false },
-      { number: Opcodes.OP_RSHIFT, name: 'OP_RSHIFT', active: false },
+      { number: Opcodes.OP_MUL, name: 'OP_MUL', active: false, disabled: true },
+      { number: Opcodes.OP_DIV, name: 'OP_DIV', active: false, disabled: true },
+      { number: Opcodes.OP_MOD, name: 'OP_MOD', active: false, disabled: true },
+      { number: Opcodes.OP_LSHIFT, name: 'OP_LSHIFT', active: false, disabled: true },
+      { number: Opcodes.OP_RSHIFT, name: 'OP_RSHIFT', active: false, disabled: true },
       { number: Opcodes.OP_BOOLAND, name: 'OP_BOOLAND', active: false },
       { number: Opcodes.OP_BOOLOR, name: 'OP_BOOLOR', active: false },
       { number: Opcodes.OP_NUMEQUAL, name: 'OP_NUMEQUAL', active: false },
@@ -363,14 +364,14 @@ export const opcodesController: OpcodeSection[] = [
   {
     section: 'Expansion and upgrades',
     opcodes: [
-      { number: Opcodes.OP_NOP1, name: 'OP_NOP1', active: false },
-      { number: Opcodes.OP_CHECKLOCKTIMEVERIFY, name: 'OP_CHECKLOCKTIMEVERIFY', active: false },
-      { number: Opcodes.OP_CHECKSEQUENCEVERIFY, name: 'OP_CHECKSEQUENCEVERIFY', active: false },
-      { number: Opcodes.OP_NOP4, name: 'OP_NOP4', active: false },
-      { number: Opcodes.OP_NOP5, name: 'OP_NOP5', active: false },
-      { number: Opcodes.OP_NOP6, name: 'OP_NOP6', active: false },
-      { number: Opcodes.OP_NOP7, name: 'OP_NOP7', active: false },
-      { number: Opcodes.OP_NOP8, name: 'OP_NOP8', active: false },
+      { number: Opcodes.OP_NOP1, name: 'OP_NOP1', active: false, disabled: true },
+      { number: Opcodes.OP_CHECKLOCKTIMEVERIFY, name: 'OP_CHECKLOCKTIMEVERIFY', active: false, disabled: true },
+      { number: Opcodes.OP_CHECKSEQUENCEVERIFY, name: 'OP_CHECKSEQUENCEVERIFY', active: false, disabled: true },
+      { number: Opcodes.OP_NOP4, name: 'OP_NOP4', active: false, disabled: true },
+      { number: Opcodes.OP_NOP5, name: 'OP_NOP5', active: false, disabled: true },
+      { number: Opcodes.OP_NOP6, name: 'OP_NOP6', active: false, disabled: true },
+      { number: Opcodes.OP_NOP7, name: 'OP_NOP7', active: false, disabled: true },
+      { number: Opcodes.OP_NOP8, name: 'OP_NOP8', active: false, disabled: true },
       { number: Opcodes.OP_NOP9, name: 'OP_NOP9', active: false },
       { number: Opcodes.OP_NOP10, name: 'OP_NOP10', active: false },
     ],
