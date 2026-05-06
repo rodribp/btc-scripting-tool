@@ -1,28 +1,41 @@
-<div class="w-[22%] h-screen absolute top-0 right-0 flex flex-col border-l border-white/10">
-  <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between shrink-0">
-    <p class="text-sm font-semibold text-white select-none">Stack</p>
-    @if (vmState.vmState(); as state) {
-      @if (state.error) {
-        <span class="text-xs font-medium text-red-400">Error</span>
-      } @else if (state.isComplete) {
-        <span class="text-xs font-semibold" [class]="state.isValid ? 'text-green-400' : 'text-red-400'">
-          {{ state.isValid ? '✓ Valid' : '✗ Invalid' }}
-        </span>
-      } @else {
-        <span class="text-xs text-gray-500">{{ state.ip }} / {{ state.script.length }}</span>
+<div class="fixed bottom-0 left-0 right-0 z-30 flex flex-col border-t border-white/10 bg-black/60 
+            lg:bg-white lg:top-0 lg:right-0 lg:bottom-auto lg:left-auto lg:w-[22%] lg:h-screen lg:border-t-0 lg:border-l">
+
+  <!-- Header: tappable on mobile to expand/collapse -->
+  <div class="px-5 py-3 lg:py-4 border-b border-white/10 flex items-center justify-between shrink-0 cursor-pointer lg:cursor-default select-none"
+       (click)="toggle()">
+    <p class="text-sm font-semibold text-white lg:text-gray-600">Stack</p>
+    <div class="flex items-center gap-2">
+      @if (vmState.vmState(); as state) {
+        @if (state.error) {
+          <span class="text-xs font-medium text-red-400">Error</span>
+        } @else if (state.isComplete) {
+          <span class="text-xs font-semibold" [class]="state.isValid ? 'text-green-400' : 'text-red-400'">
+            {{ state.isValid ? '✓ Valid' : '✗ Invalid' }}
+          </span>
+        } @else {
+          <span class="text-xs text-gray-500">{{ state.ip }} / {{ state.script.length }}</span>
+        }
       }
-    }
+      <svg class="lg:hidden h-4 w-4 text-gray-400 transition-transform duration-300"
+           [class.rotate-180]="isExpanded()"
+           xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+      </svg>
+    </div>
   </div>
 
   @if (vmState.vmState()?.error; as error) {
-  <div class="px-5 py-3 border-b border-red-900/40 bg-red-950/40 shrink-0">
+  <div class="px-5 py-3 border-b border-red-900/40 bg-red-950/40 shrink-0"
+       [ngClass]="{ 'max-lg:hidden': !isExpanded() }">
     <p class="text-xs text-red-300 break-all">{{ error }}</p>
   </div>
   }
 
-  <div class="flex-1 overflow-y-auto p-4">
+  <div class="flex-1 min-h-0 overflow-y-auto p-4"
+       [ngClass]="isExpanded() ? 'max-lg:max-h-[40vh]' : 'max-lg:hidden'">
     @if (!vmState.vmState()) {
-    <p class="text-gray-600 text-xs text-center mt-10 leading-relaxed select-none">
+    <p class="text-white lg:text-gray-600 text-xs text-center mt-10 leading-relaxed select-none">
       Press Step or Run<br>to execute the script
     </p>
     } @else if (stackTopFirst().length === 0) {
@@ -30,10 +43,10 @@
     } @else {
     <div class="grid gap-3">
       @for (item of stackTopFirst(); track $index; let first = $first) {
-      <div class="text-gray-600 rounded-xl flex flex-col items-center justify-center p-3 border transition-colors">
-        <p class="font-mono text-xs text-gray-600 break-all text-center leading-snug">{{ toHex(item) }}</p>
+      <div class="rounded-xl flex flex-col items-center justify-center p-3 text-white lg:text-gray-600 border-white lg:border-black border transition-colors">
+        <p class="font-mono text-xs break-all text-center leading-snug">{{ toHex(item) }}</p>
         @if (toDecoded(item); as decoded) {
-        <p class="text-[10px] text-gray-600 mt-1.5">{{ decoded }}</p>
+        <p class="text-[10px] mt-1.5">{{ decoded }}</p>
         }
       </div>
       }

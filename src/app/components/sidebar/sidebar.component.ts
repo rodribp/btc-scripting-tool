@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
-import { opcodesController } from '../../btc-scripts/utils/opcodes.constants';
+import { Component, inject, signal } from '@angular/core';
+import { opcodesController, OpcodeControl } from '../../btc-scripts/utils/opcodes.constants';
 import { NgClass } from '@angular/common';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
+import { ScriptBuilderService } from '../../btc-scripts/services/script-builder.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,6 +11,16 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
   styleUrl: 'sidebar.component.scss',
 })
 export class SidebarComponent {
+  private scriptBuilder = inject(ScriptBuilderService);
+
+  isOpen = signal(false);
+  toggle() { this.isOpen.update(v => !v); }
+  close() { this.isOpen.set(false); }
+
+  addOpcode(opcode: OpcodeControl, color: string) {
+    this.scriptBuilder.addBlock(opcode, color);
+  }
+
   opcodesList = signal(
     opcodesController
       .map((s) => ({ ...s, opcodes: s.opcodes.filter((op) => op.active) }))

@@ -1,6 +1,31 @@
-<div id="sidebar" class="w-[20%] h-screen absolute left-0 p-4 flex flex-col">
-  <h1 class="text-2xl font-medium leading-normal"> &lt;/&gt;<br> BITCOIN SCRIPTING TOOL </h1>
-  <h2 class="text-sm leading-tight text-gray-500">A visualizer of scripts and stack execution for devs!</h2>
+<button class="lg:hidden fixed top-4 left-4 z-[60] p-2 rounded-md bg-[#000101] text-white"
+  (click)="toggle()">
+  @if (isOpen()) {
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  } @else {
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  }
+</button>
+
+@if (isOpen()) {
+  <div class="lg:hidden fixed inset-0 bg-black/50 z-40" (click)="close()"></div>
+}
+
+<div id="sidebar"
+  class="fixed left-0 top-0 h-screen z-50 w-[80%] max-w-xs lg:w-[20%] p-4 flex flex-col transition-transform duration-300"
+  [ngClass]="{ 'max-lg:-translate-x-full': !isOpen() }">
+
+  <div class="flex items-start justify-between gap-2">
+    <div>
+      <h1 class="text-2xl font-medium leading-normal"> &lt;/&gt;<br> BITCOIN SCRIPTING TOOL </h1>
+      <h2 class="text-sm leading-tight text-gray-500">A visualizer of scripts and stack execution for devs!</h2>
+    </div>
+  </div>
+
   <input #searchInput (keyup)="search(searchInput.value)" type="text"
     class="bg-[#000101] mt-6 w-full h-8 px-4 py-5 rounded-md text-gray-500 outline-none" placeholder="Searh OP_CODE">
 
@@ -10,12 +35,24 @@
       class="opcodes-section mb-4">
       <p class="section-title text-gray-400">{{ section.section }}</p>
       @for (opcode of section.opcodes; track opcode.name) {
-      <div cdkDrag [cdkDragData]="{ opcode: opcode, color: sectionColors[section.section] }" class="opcode mt-2 p-2 rounded-md w-fit flex flex-col gap-2 hover:cursor-grab z-30"
+
+      <div class="lg:hidden flex items-center justify-between mt-2 p-2 rounded-md gap-2"
+        [ngClass]="sectionColors[section.section]">
+        <span class="text-sm font-medium leading-none select-none">
+          {{ opcode.alias ? opcode.name + ' / ' + opcode.alias : opcode.name }}
+        </span>
+        <button (click)="addOpcode(opcode, sectionColors[section.section])"
+          class="text-white/70 hover:text-white text-xl font-bold leading-none shrink-0">+</button>
+      </div>
+
+      <div cdkDrag [cdkDragData]="{ opcode: opcode, color: sectionColors[section.section] }"
+        class="hidden lg:flex opcode mt-2 p-2 rounded-md w-fit flex-col gap-2 hover:cursor-grab z-30"
         [ngClass]="sectionColors[section.section]">
         <span class="text-md font-medium leading-none flex items-center gap-2 select-none">
           {{ opcode.alias ? opcode.name + ' / ' + opcode.alias : opcode.name }}
         </span>
       </div>
+
       }
     </section>
     }
